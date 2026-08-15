@@ -1,0 +1,12 @@
+{
+  "name": "tracefield",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": { "tracefield": "src/cli.mjs" },
+  "scripts": {
+    "check": "node --check src/cli.mjs && node --check src/scanner.mjs && node --check src/compare.mjs && node --check src/report.mjs && node --check viewer/app.js",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "engines": { "node": ">=20" }
+}
