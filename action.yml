@@ -1,0 +1,35 @@
+name: Tracefield PR impact
+description: Generate a read-only code map and blast-radius report for a pull request
+inputs:
+  base-ref:
+    description: Base Git commit or ref
+    required: false
+  head-ref:
+    description: Head Git commit or ref
+    required: false
+    default: HEAD
+  output:
+    description: Report output directory
+    required: false
+    default: tracefield-report
+runs:
+  using: composite
+  steps:
+    - name: Generate Tracefield report
+      shell: bash
+      env:
+        TRACEFIELD_BASE: ${{ inputs.base-ref }}
+        TRACEFIELD_HEAD: ${{ inputs.head-ref }}
+        TRACEFIELD_OUTPUT: ${{ inputs.output }}
+      run: |
+        set -euo pipefail
+        base="${TRACEFIELD_BASE:-${{ github.event.pull_request.base.sha }}}"
+        if [[ -z "$base" ]]; then base="HEAD~1"; fi
+        node "$GITHUB_ACTION_PATH/src/cli.mjs" compare --repo "$GITHUB_WORKSPACE" --base "$base" --head "$TRACEFIELD_HEAD" --output "$TRACEFIELD_OUTPUT"
+        cat "$TRACEFIELD_OUTPUT/summary.md" >> "$GITHUB_STEP_SUMMARY"
+    - name: Upload Tracefield report
+      uses: actions/upload-artifact@v7
+      with:
+        name: tracefield-report
+        path: ${{ inputs.output }}
+        if-no-files-found: error
