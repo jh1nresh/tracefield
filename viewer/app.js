@@ -1,5 +1,3 @@
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
 const SVG_NS = "http://www.w3.org/2000/svg";
 const graph = globalThis.TRACEFIELD_GRAPH ?? await fetch("./data/graph.json", { cache: "no-store" }).then((response) => {
   if (!response.ok) throw new Error("Could not load the generated code map.");
